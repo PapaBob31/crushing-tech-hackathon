@@ -111,11 +111,13 @@ form input:hover {
 #profile-menu-content.hidden {
   transform: scale(0, 0);
   opacity: 0;
+  visibility: hidden;
 }
 
 #profile-menu-content.shown {
   transform: scale(1, 1);
   opacity: 1;
+  visibility: visible;
 }
 
 #alerts-div, #profile-menu-content {
@@ -153,11 +155,13 @@ form input:hover {
 #alerts-div.hidden {
   transform: scale(0, 0);
   opacity: 0;
+  visibility: hidden;
 }
 
 #alerts-div.shown {
   transform: scale(1, 1);
   opacity: 1;
+  visibility: visible;
 }
 
 #first-menu-section {
