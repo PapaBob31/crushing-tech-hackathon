@@ -1,23 +1,29 @@
 
-let currentlyShownComponent = null;
+let currentlyShownComponent = {trigger: null, component: null};
 
 function toggleComponentVisibility(event, component) {
   event.stopPropagation();
 
-  if (currentlyShownComponent) {
-    currentlyShownComponent.classList.toggle("shown")
-    if (currentlyShownComponent === component) {
-      currentlyShownComponent = null;
+  if (currentlyShownComponent.component) {
+    currentlyShownComponent.component.classList.toggle("shown")
+    currentlyShownComponent.trigger.setAttribute("aria-expanded", "false")
+    if (currentlyShownComponent.component === component) {
+      currentlyShownComponent.trigger = null;
+      currentlyShownComponent.component = null;
       return;
     }
   }
   component.classList.toggle("shown")
-  currentlyShownComponent = component
+  currentlyShownComponent.trigger = event.currentTarget;
+  currentlyShownComponent.trigger.setAttribute("aria-expanded", "true")
+  currentlyShownComponent.component = component;
 }
 
-const menu =  document.getElementById("profile-menu-content")
-const menuToggle = document.getElementById("profile-button")
+const menu =  document.getElementById("menu")
+const menuToggle = document.getElementById("menu-toggle")
+const profileButton = document.getElementById("profile-button")
 menuToggle.addEventListener("click", event => toggleComponentVisibility(event, menu))
+profileButton.addEventListener("click", event => toggleComponentVisibility(event, menu))
 
 const notificationIcon = document.getElementById("notification-icon")
 const notifications = document.getElementById("alerts-div")
@@ -25,8 +31,10 @@ notificationIcon.addEventListener("click", event => toggleComponentVisibility(ev
 
 function hidePopupComponent() { // hide any popped up element (e.g menu) when clicked outside of it
   if (currentlyShownComponent) {
-    currentlyShownComponent.classList.toggle("shown")
-    currentlyShownComponent = null;
+    currentlyShownComponent.component.classList.toggle("shown") 
+    currentlyShownComponent.trigger.setAttribute("aria-expanded", "false")
+    currentlyShownComponent.component = null;
+    currentlyShownComponent.trigger = null;
   }
 }
 
@@ -44,8 +52,10 @@ function handleKeyNavigation(event) {
     cfli = 0
   }else {
     if (event.key === "ArrowUp" ||  event.key === "ArrowLeft") {
+      // Moves focus to link above. If the link is the first one, focus should return to last link in the menu
       cfli = (cfli > 0 ? cfli - 1 : menuLinks.length - 1)
     }else if (event.key === "ArrowDown" ||  event.key === "ArrowRight")  {
+      // Moves focus to link below. If the link is the last one, focus should return to first link in the menu
       cfli = (cfli < menuLinks.length - 1 ? cfli + 1 : 0 )
     }else return;
   }
@@ -63,23 +73,46 @@ let setUpToggleBtn  = document.getElementById("setup-visibility-toggle")
 setUpToggleBtn.addEventListener("click", showOrHideSetUp)
 
 function showOrHideSetUp() {
-  setUpGuide.classList.toggle("hidden") 
+  setUpGuide.classList.toggle("hidden")
   setUpToggleBtn.classList.toggle("up")
 }
-  
-let currentlyFocusedStep = document.querySelector(".focused-step")
-const markToggleBtns = document.querySelectorAll(".checkmark-btn")
-markToggleBtns.forEach(element => element.addEventListener("click", toggleMarkState))
+
+const stepsVisibilityToggles = setUpGuide.querySelectorAll(".step-header-btn");
+stepsVisibilityToggles.forEach(button => button.addEventListener("click", (event) => toggleFocusedState(event.target)))
+let currentlyFocusedStep = null;
 
 // Toggles the state of each step in setup section
-function toggleMarkState(event) { 
-  currentlyFocusedStep.classList.remove("focused-step")
-  currentlyFocusedStep = event.target.closest("li")
-  currentlyFocusedStep.classList.add("focused-step")
+function toggleFocusedState(element) {
+  let step = element.closest("li")
+  let stepDescription = step.querySelector(".description")
+  let stepImage = step.querySelector("img")
+
+  if (step !== currentlyFocusedStep) {
+    if (currentlyFocusedStep) {
+      currentlyFocusedStep.classList.remove("focused-step")
+      currentlyFocusedStep.querySelector(".description").style.height = null
+      currentlyFocusedStep.querySelector("img").style.height = null
+    }
+    currentlyFocusedStep = step
+    currentlyFocusedStep.classList.add("focused-step")
+    stepDescription.style.height = stepDescription.scrollHeight + "px"
+    stepImage.style.height = stepImage.scrollHeight + "px"
+  }
 }
 
-let checkMarkBtns = document.querySelectorAll(".checkmark-btn")
+let checkMarkBtns = Array.from(document.querySelectorAll(".checkmark-btn"))
 checkMarkBtns.forEach(btn => btn.addEventListener("click", setButtonState))
+
+function expandNextUnMarkedStep(next_index) {
+  for (let i=next_index, n=0; n < 5; n++, i++) {
+    i=(i+5)%5; // changes i to 0 incase we reach the last index and we haven't iterated through all checkMarks
+    if (!checkMarkBtns[i].classList.contains("marked")) {
+      toggleFocusedState(checkMarkBtns[i])
+      break;
+    }
+  }
+}
+
 const progressBar = document.getElementById("progress-bar")
 let progressText = document.getElementById("progress-text")
 let progress = 0;
@@ -95,6 +128,7 @@ function setButtonState(event) {
         checkMarkBtn.dataset.state = "marked"
         checkMarkBtn.className = "checkmark-btn marked"
         progress += 20
+        expandNextUnMarkedStep(checkMarkBtns.indexOf(checkMarkBtn)+1)
       }else {
         checkMarkBtn.dataset.state = "unmarked"
         checkMarkBtn.className = "checkmark-btn unmarked"
@@ -103,6 +137,6 @@ function setButtonState(event) {
       progressBar.setAttribute("aria-valuenow", progress.toString())
       progressText.textContent = (progress/20).toString() + " / 5 Completed"
       progressBar.className = percentageMapping[progress] // Updates progress bar display
-    }, 800)
+    }, 2000)
   }
 }

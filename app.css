@@ -2,6 +2,7 @@
   font-size: 14px;
   font-family: 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  box-sizing: border-box;
 }
 
 *:focus {
@@ -12,7 +13,6 @@ body {
   padding: 0;
   margin: 0;
   background-color: #F1F1F1;
-  box-sizing: border-box;
 }
 
 header {
@@ -23,8 +23,13 @@ header {
   padding: 0.8rem;
 }
 
+header a {
+  text-decoration: none;
+}
+
 header img {
   color: white;
+  text-decoration: none;
 }
 
 #mobile-icon {
@@ -70,15 +75,17 @@ form input:hover {
   position: relative;
 }
 
-#top-level-menu {
+#menu-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 2.5rem;
   padding-left: 4px;
   background-color: #303030;
-  border-radius: 8px 0 0px 8px;
+  border-radius: 8px;
+  border: none ;
   color: white;
+  cursor: default;
 }
 
 #notification-icon {
@@ -87,7 +94,7 @@ form input:hover {
   border: none;
   border-radius: 8px;
   background-color: #303030;
-  margin-right: 6px;
+  margin: 0 6px 0 4px;
   padding: 5px;
 }
 
@@ -96,7 +103,7 @@ form input:hover {
   height: 2rem;
 }
 
-#notification-icon:hover, #top-level-menu:hover {
+#notification-icon:hover, #menu-toggle:hover {
   background-color: #616161;
 }
 
@@ -108,19 +115,19 @@ form input:hover {
   margin-left: 6px;
 }
 
-#profile-menu-content.hidden {
+#menu.hidden {
   transform: scale(0, 0);
   opacity: 0;
   visibility: hidden;
 }
 
-#profile-menu-content.shown {
+#menu.shown {
   transform: scale(1, 1);
   opacity: 1;
   visibility: visible;
 }
 
-#alerts-div, #profile-menu-content {
+#alerts-div, #menu {
   position: absolute;
   top: 50px;
   right: 0;
@@ -130,7 +137,6 @@ form input:hover {
   box-shadow: -4px 4px 5px rgba(120, 120, 120, 0.2);
   transform-origin: top right;
   transition-duration: .2s;
-  transition-property: scale opacity;
   background-color: white;
   z-index: 20;
 }
@@ -226,6 +232,10 @@ form input:hover {
   background-color: #F7F7F7;
 }
 
+#menu a small {
+  color: #616161;
+}
+
 #plans-section.hidden {
   display: none;
 }
@@ -249,13 +259,14 @@ form input:hover {
   align-items: center;
 }
 
-#plans-section button {
+#plans-section a {
   font-weight: bold;
   padding: 8px;
   border-radius: 5px;
   background-color: white;
-  border: none;
   margin-right: 10px;
+  text-decoration: none;
+  color: black;
 }
 
 #plans-section #close-icon {
@@ -265,10 +276,11 @@ form input:hover {
   background-color: inherit;
   border-radius: 5px;
   padding: 2px;
+  border: none;
 }
 
 #plans-section #close-icon:hover {
-  background-color: #3d3d3d;
+  background-color: #4d4d4d;
 }
 
 #close-icon svg {
@@ -282,7 +294,7 @@ form input:hover {
   min-width: 600px;
   margin: 20px auto 0;
   background-color: white;
-  padding: 1rem;
+  padding: 8px;
   border-radius: 15px;
 }
 
@@ -293,7 +305,7 @@ form input:hover {
 #progress-container {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 #progress-bar-container {
@@ -331,8 +343,16 @@ form input:hover {
   width: 100%;
 }
 
-#main-section h3 {
-  margin: 0;
+#main-section > * {
+  padding: 0 8px;
+}
+
+#main-section h1 {
+  margin: 10px 0 0;
+}
+
+#main-section > p {
+  margin-top: 4px;
 }
 
 #setup-visibility-toggle {
@@ -364,15 +384,14 @@ form input:hover {
 
 #setup-guide {
   padding: 0;
-}
-
-#setup-guide.hidden li {
-  transform-origin: top;
-  transform: scaleY(0);
+  margin: 30px 0 0;
+  transition-property: min-height;
+  transition: .3s;
+  overflow: hidden;
+  height: auto;
 }
 
 #setup-guide.hidden {
-  margin: 0;
   height: 0;
 }
 
@@ -381,18 +400,24 @@ form input:hover {
   align-items: flex-start;
   list-style: none;
   margin-bottom: 0;
-  padding: 0.5rem 0;
+  padding: 8px;
   border-radius: 10px;
-  transform: scaleY(1);
+  transition-duration: .5s;
+  transition-property: background-color;
 }
 
 #setup-guide li h2 {
-  margin-top: 5px;
-  height: fit-content !important;
-  visibility: visible !important;
+  margin: 5px 0 0;
 }
 
-#setup-guide li div {
+#setup-guide li h2 button {
+  background-color: transparent;
+  font-weight: bold;
+  border: none;
+  text-align: left;
+}
+
+#setup-guide li > div {
   width: 70%;
   margin-right: 10%;
 }
@@ -414,9 +439,12 @@ form input:hover {
   margin-bottom: 5px;
 }
 
-#setup-guide li p, #setup-guide li .main-btn, #setup-guide li img  {
+#setup-guide li .description, #setup-guide li img  {
+  overflow: hidden;
+  transition-duration: .3s;
+  transition-property: height;
   height: 0;
-  display: none;
+  visibility: hidden;
 }
 
 #setup-guide li p {
@@ -432,12 +460,12 @@ form input:hover {
 }
 
 #setup-guide li.focused-step {
+  transition-duration: 0s;
   background-color: #F3F3F3;
 }
 
-#setup-guide li.focused-step p, #setup-guide li.focused-step .main-btn, #setup-guide li.focused-step img {
-  height: auto;
-  display: block;
+#setup-guide li.focused-step .description, #setup-guide li.focused-step img {
+  visibility: visible;
 }
 
 #setup-guide li img {
@@ -451,6 +479,8 @@ form input:hover {
   background-color: transparent;
   width: fit-content;
   height: fit-content;
+  border-radius: 8px;
+  padding: 0;
 }
 
 .unmarked:hover circle {
@@ -470,13 +500,22 @@ svg.unmarked, svg.loading, svg.marked  {
 
 .checkmark-btn.loading .loading {
   display: inline-block;
-  animation-name: spinner;
-  animation-timing-function: linear;
-  animation-duration: .7s;
-  animation-iteration-count: infinite;
+  animation: .8s linear infinite spinner;
+}
+
+@keyframes zoom-in-checkmark {
+  from {
+    display: inline-block;
+    transform: scale(0, 0);
+  }
+  to {
+    display: inline-block;
+    transform: scale(1, 1);
+  }
 }
 
 .checkmark-btn.marked .marked {
+  animation: .3s forwards zoom-in-checkmark;
   display: inline-block;
 }
 
@@ -503,11 +542,11 @@ svg.unmarked, svg.loading, svg.marked  {
     width: 50%;
   }
 
-  #top-level-menu {
+  #menu-toggle {
     padding-left: 0;
   }
 
-  #top-level-menu span {
+  #menu-toggle span {
     display: none;
   }
 
@@ -515,13 +554,15 @@ svg.unmarked, svg.loading, svg.marked  {
     margin-left: 0;
   }
 
-  #profile-menu-content {
+  #menu {
     min-width: 90vw;
   }
 
   #alerts-div {
-    right: 30px;
-    min-width: 80vw;
+    min-width: 0;
+    right: 7.5vw;
+    width: 85vw;
+    box-sizing: border-box;
   }
 
   #plans-section {
@@ -554,5 +595,10 @@ svg.unmarked, svg.loading, svg.marked  {
 
   #setup-guide li img, #setup-guide li.focused-step img {
     display: none;
+  }
+
+  #setup-guide li > div {
+    width: 100%;
+    margin-right: 8px;
   }
 }
